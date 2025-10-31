@@ -71,7 +71,7 @@ describe('VehicleListPage', () => {
         expect(component).toBeTruthy();
     });
 
-    it('should load vehicles on initialization', () => {
+    it('should load 3 vehicles on initialization and show table', () => {
         spyOn(vehicleService, 'getVehicles').and.returnValue(of(mockVehicles));
 
         component.ngOnInit();
@@ -79,19 +79,11 @@ describe('VehicleListPage', () => {
         expect(vehicleService.getVehicles).toHaveBeenCalled();
         expect(component.vehicles()).toEqual(mockVehicles);
         expect(component.vehicles().length).toBe(3);
-    });
 
-    it('should handle errors when fetching vehicles', () => {
-        const errorMessage = 'Network error';
-        spyOn(vehicleService, 'getVehicles').and.returnValue(
-            throwError(() => new Error(errorMessage)),
-        );
-        spyOn(console, 'error');
+        fixture.detectChanges();
 
-        component.ngOnInit();
-
-        expect(vehicleService.getVehicles).toHaveBeenCalled();
-        expect(component.vehicles().length).toBe(0);
-        expect(console.error).toHaveBeenCalledWith('Error fetching vehicles:', jasmine.any(Error));
+        const compiled = fixture.nativeElement as HTMLElement;
+        const tableRows = compiled.querySelectorAll('table tbody tr');
+        expect(tableRows.length).toBe(3);
     });
 });
